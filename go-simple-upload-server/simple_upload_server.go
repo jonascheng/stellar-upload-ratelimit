@@ -63,9 +63,11 @@ func run(args []string) int {
 		}
 	}
 	tlsEnabled := *certFile != "" && *keyFile != ""
+
+	mux := http.NewServeMux()
 	server := NewServer(serverRoot, *maxUploadSize, token, *corsEnabled, protectedMethods)
-	http.Handle("/upload", server)
-	http.Handle("/files/", server)
+	mux.Handle("/upload", server)
+	mux.Handle("/files/", server)
 
 	errors := make(chan error)
 
@@ -80,7 +82,7 @@ func run(args []string) int {
 			"cors":             *corsEnabled,
 		}).Info("start listening")
 
-		if err := http.ListenAndServe(fmt.Sprintf("%s:%d", *bindAddress, *listenPort), nil); err != nil {
+		if err := http.ListenAndServe(fmt.Sprintf("%s:%d", *bindAddress, *listenPort), mux); err != nil {
 			errors <- err
 		}
 	}()
@@ -93,7 +95,7 @@ func run(args []string) int {
 				"port": *tlsListenPort,
 			}).Info("start listening TLS")
 
-			if err := http.ListenAndServeTLS(fmt.Sprintf("%s:%d", *bindAddress, *tlsListenPort), *certFile, *keyFile, nil); err != nil {
+			if err := http.ListenAndServeTLS(fmt.Sprintf("%s:%d", *bindAddress, *tlsListenPort), *certFile, *keyFile, mux); err != nil {
 				errors <- err
 			}
 		}()

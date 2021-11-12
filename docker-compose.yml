@@ -4,7 +4,10 @@ version: "3.7"
 services:
 
   simple-upload-server:
-    image: mayth/simple-upload-server
+    build:
+      context: ./go-simple-upload-server/
+      dockerfile: Dockerfile
+    image: local/simple-upload-server
     container_name: simple-upload-server
     restart: on-failure
     ports:

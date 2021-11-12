@@ -58,6 +58,11 @@ func (s Server) handleGet(w http.ResponseWriter, r *http.Request) {
 
 func (s Server) handlePost(w http.ResponseWriter, r *http.Request) {
 	srcFile, info, err := r.FormFile("file")
+
+	logger.WithFields(logrus.Fields{
+		"srcFile": srcFile,
+	}).Info("handlePost")
+
 	if err != nil {
 		logger.WithError(err).Error("failed to acquire the uploaded content")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -73,12 +78,19 @@ func (s Server) handlePost(w http.ResponseWriter, r *http.Request) {
 		writeError(w, err)
 		return
 	}
+
+	logger.WithFields(logrus.Fields{
+		"size": size,
+	}).Info("handlePost")
+
 	if size > s.MaxUploadSize {
 		logger.WithField("size", size).Info("file size exceeded")
 		w.WriteHeader(http.StatusRequestEntityTooLarge)
 		writeError(w, errors.New("uploaded file size exceeds the limit"))
 		return
 	}
+
+	logger.Info("start ioutil.ReadAll")
 
 	body, err := ioutil.ReadAll(srcFile)
 	if err != nil {
@@ -87,6 +99,9 @@ func (s Server) handlePost(w http.ResponseWriter, r *http.Request) {
 		writeError(w, err)
 		return
 	}
+
+	logger.Info("end ioutil.ReadAll")
+
 	filename := info.Filename
 	if filename == "" {
 		filename = fmt.Sprintf("%x", sha1.Sum(body))
