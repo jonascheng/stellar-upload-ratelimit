@@ -1,0 +1,14 @@
+---
+version: "3.7"
+
+services:
+
+  simple-upload-server:
+    image: mayth/simple-upload-server
+    container_name: simple-upload-server
+    restart: on-failure
+    ports:
+    - 0.0.0.0:8080:25478
+    volumes:
+    - /tmp:/var/root
+    command: ["-token", "secret", "/var/root"]
