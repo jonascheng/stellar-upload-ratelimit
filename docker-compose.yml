@@ -15,3 +15,16 @@ services:
     volumes:
     - /tmp:/var/root
     command: ["-token", "secret", "/var/root"]
+
+  simple-upload-server-sidecar:
+    build:
+      context: ./go-simple-upload-server/
+      dockerfile: Dockerfile.sidecar
+    image: local/simple-upload-server-sidecar
+    container_name: simple-upload-server-sidecar
+    restart: on-failure
+    # w/ verbose output
+    # command: ["-Qin", "-nvvvXi", "eth0", "port", "25478"]
+    # w/o verbose output
+    command: ["-Qin", "-nvvvi", "eth0", "port", "25478"]
+    network_mode: "service:simple-upload-server"
