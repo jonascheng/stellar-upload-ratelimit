@@ -28,6 +28,4 @@ dist/*
 .idea/
 
 bin/**
-*.json
-*.gz
 coverage.out
