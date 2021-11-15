@@ -1,6 +1,8 @@
 ![CI](https://github.com/jonascheng/stellar-upload-ratelimit/actions/workflows/ci.yaml/badge.svg)
 ![CD](https://github.com/jonascheng/stellar-upload-ratelimit/actions/workflows/cd.yaml/badge.svg)
+<!--
 ![codecov](https://codecov.io/gh/jonascheng/stellar-upload-ratelimit/branch/main/graph/badge.svg)
+-->
 
 # stellar-upload-ratelimit
 
