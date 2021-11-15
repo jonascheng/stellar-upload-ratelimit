@@ -6,14 +6,27 @@
 
 ## Usage
 
+### Start simple upload server
+
+```bash
+$ docker-compose up
+```
+
+### Launch client to upload
+
 ```bash
 $ ./bin/upload-go --help
 usage: upload-go [<flags>]
 
 Flags:
-  --help                Show context-sensitive help (also try --help-long and
-                        --help-man).
-  --version             Show application version.
+  --help     Show context-sensitive help (also try --help-long and --help-man).
+  --server="http://localhost:8080/upload?token=secret"
+             Upload server endpoint.
+  --file="./data/agent-telemetry-threat-info-flat-500-1636954894.json.gz"
+             Upload source file.
+  --rate=5   Upload rate limit in Mbps.
+  --version  Show application version.
+
 ```
 
 ## LICENSE
