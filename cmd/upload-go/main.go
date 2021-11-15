@@ -17,8 +17,8 @@ import (
 
 var (
 	uploadServer = kingpin.Flag("server", "Upload server endpoint.").Default("http://localhost:8080/upload?token=secret").String()
-	srcFile      = kingpin.Flag("file", "Upload source file.").Default("./data/agent-telemetry-threat-info-flat-100-1636860627.json").String()
-	rateLimit    = kingpin.Flag("rate", "Upload rate limit in Mbps.").Default("100").Float64()
+	srcFile      = kingpin.Flag("file", "Upload source file.").Default("./data/agent-telemetry-threat-info-flat-500-1636954894.json.gz").String()
+	rateLimit    = kingpin.Flag("rate", "Upload rate limit in Mbps.").Default("5").Float64()
 )
 
 // wrapper to limit io.Reader speed
@@ -73,12 +73,17 @@ func UploadFile(server string, filePath string, ratelimitMbs float64) {
 	// log.Printf("%v\n", transport)
 	// client.Transport = transport
 
-	log.Println("start client.Do")
-	resp, err := client.Do(req)
-	log.Println("end client.Do")
-	checkError(err)
+	{
+		quit := make(chan bool)
+		log.Println("start client.Do")
+		go dots(quit)
+		resp, err := client.Do(req)
+		quit <- true
+		log.Println("\nend client.Do")
+		checkError(err)
+		log.Println(*resp)
+	}
 
-	fmt.Println(*resp)
 }
 
 func main() {
@@ -91,5 +96,17 @@ func main() {
 func checkError(err error) {
 	if err != nil {
 		log.Fatal(err)
+	}
+}
+
+func dots(quit chan bool) {
+	for {
+		select {
+		case <-quit:
+			return
+		default:
+			time.Sleep(time.Second)
+			fmt.Print(".")
+		}
 	}
 }
